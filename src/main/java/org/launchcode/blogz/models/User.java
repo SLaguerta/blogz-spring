@@ -20,78 +20,85 @@ public class User extends AbstractEntity {
 	private String username;
 	private String pwHash;
 	private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-	
+
+
+	//all the posts by a given user versus using statics
 	private List<Post> posts;
-	
+
+	//no arg constructor for the sake of Hibernate
 	public User() {}
-	
+
 	public User(String username, String password) {
-		
+
 		super();
-		
+
 		if (!isValidUsername(username)) {
 			throw new IllegalArgumentException("Invalid username");
 		}
-		
+
 		this.username = username;
 		this.pwHash = hashPassword(password);
-		
+
 	}
-	
+
 	@NotNull
     @Column(name = "pwhash")
 	public String getPwHash() {
 		return pwHash;
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void setPwHash(String pwHash) {
 		this.pwHash = pwHash;
 	}
-	
+
 	@NotNull
     @Column(name = "username", unique = true)
 	public String getUsername() {
 		return username;
 	}
-	
-	private static String hashPassword(String password) {		
+
+	private static String hashPassword(String password) {
 		return encoder.encode(password);
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void setUsername(String username) {
 		this.username = username;
 	}
-	
+
+	//checks that the given password is correct for the user
+	//instance property so call it by user.isMatchingPassword(value)
 	public boolean isMatchingPassword(String password) {
 		return encoder.matches(password, pwHash);
 	}
-	
+
+	//CHecks that password meets minimum standards
 	public static boolean isValidPassword(String password) {
 		Pattern validUsernamePattern = Pattern.compile("(\\S){6,20}");
 		Matcher matcher = validUsernamePattern.matcher(password);
 		return matcher.matches();
 	}
-	
+
+	//checks username meets minimum standards
 	public static boolean isValidUsername(String username) {
 		Pattern validUsernamePattern = Pattern.compile("[a-zA-Z][a-zA-Z0-9_-]{4,11}");
 		Matcher matcher = validUsernamePattern.matcher(username);
 		return matcher.matches();
 	}
-	
+
 	protected void addPost(Post post) {
 		posts.add(post);
 	}
-	
+
 	@OneToMany
     @JoinColumn(name = "author_uid")
     public List<Post> getPosts() {
         return posts;
     }
-	
+
 	public void setPosts(List<Post> posts) {
 		this.posts = posts;
 	}
-	
+
 }

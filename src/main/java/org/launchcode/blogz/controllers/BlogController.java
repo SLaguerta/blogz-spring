@@ -16,6 +16,8 @@ public class BlogController extends AbstractController {
 		
 		// TODO - fetch users and pass to template
 		
+		//displays all users
+		
 		return "index";
 	}
 	
