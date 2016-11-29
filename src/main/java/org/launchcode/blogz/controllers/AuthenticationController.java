@@ -76,7 +76,7 @@ public class AuthenticationController extends AbstractController {
 		//get user by their username
 		User user = userDao.findByUsername(username);
 
-		//check passowrd is correct; if not redirect to the login page with error message;
+		//check password is correct; if not redirect to the login page with error message;
 		if(!user.isMatchingPassword(password)){
 			model.addAttribute("error", "Incorrect password, try again");
 			return "login";
