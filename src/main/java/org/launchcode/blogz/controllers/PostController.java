@@ -62,9 +62,11 @@ public class PostController extends AbstractController {
 		//get parameters are already above
 
 		//get the given post
-
+		Post post= postDao.findOne(uid);
+		//Post post = postDao.findByUid(uid);
+		
 		//past the given post into the template
-
+		model.addAttribute("post", post);
 		return "post";
 	}
 
