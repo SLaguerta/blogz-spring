@@ -1,11 +1,11 @@
 package org.launchcode.blogz.controllers;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.launchcode.blogz.models.Post;
 import org.launchcode.blogz.models.User;
+import org.launchcode.blogz.models.dao.PostDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class PostController extends AbstractController {
 
+	@Autowired
+	private PostDao postDao;
+	
 	@RequestMapping(value = "/blog/newpost", method = RequestMethod.GET)
 	public String newPostForm() {
 		return "newpost";
@@ -26,16 +29,28 @@ public class PostController extends AbstractController {
 		// TODO - implement newPost
 
 		//get request parameters
+		String title = request.getParameter("title");
+		String body = request.getParameter("body");
+		
+		
+		//validate parameters: If not valid, send them back to form with error message
+		
+		if(title==null || title==""){
+			model.addAttribute("error", "Title required");
+			return "newpost";
+		}
+		if(body==null || body==""){
+			model.addAttribute("error", "Body required");
+			return "newpost";
+		}
 
-		//validate parameters
-
-		//if valid, create new POst
-
-		//if not valid, send them back to the form with an error message
-
-		//implement post model and post dao to save
-
-		return "redirect:index"; // TODO - this redirect should go to the new post's page
+		//if valid, create new Post; implement post model and postdao to save
+		Integer userId = (Integer) request.getSession().getAttribute(AbstractController.userSessionKey);
+		User author = userDao.findByUid(userId);
+		Post post = new Post(title, body, author);
+		postDao.save(post);
+		model.addAttribute("post",post);
+		return "redirect:"+ post.getAuthor().getUsername() + "/" + post.getUid(); // TODO - this redirect should go to the new post's page
 	}
 	//curly braces represent the dynamic urls or request handlers here
 		//handles request like /blog/chris/5
