@@ -1,5 +1,7 @@
 package org.launchcode.blogz.controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.launchcode.blogz.models.Post;
@@ -63,7 +65,7 @@ public class PostController extends AbstractController {
 
 		//get the given post
 		Post post= postDao.findOne(uid);
-		//Post post = postDao.findByUid(uid);
+	
 		
 		//past the given post into the template
 		model.addAttribute("post", post);
@@ -75,13 +77,12 @@ public class PostController extends AbstractController {
 	public String userPosts(@PathVariable String username, Model model) {
 
 		// TODO - implement userPosts
-
+		User author = userDao.findByUsername(username);
 		//get all the posts
-
+		List<Post> posts = postDao.findByAuthor_uid(author.getUid());
 		//pass the posts into the template
-
-		//model.addAttribute("name", someObject)
-		//(name of the attribute, object, string of integer, or even a list that is defined right above)
+		model.addAttribute("posts", posts);
+		
 		return "blog";
 	}
 
